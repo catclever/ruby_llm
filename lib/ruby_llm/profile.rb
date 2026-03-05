@@ -11,8 +11,7 @@ module RubyLlm
 
     DEFAULT_PATHS = [
       'llm.yml',
-      'config/llm.yml',
-      '.agent/llm.yml'
+      'config/llm.yml'
     ].freeze
 
     def self.load(profile_name, file_path: nil)
