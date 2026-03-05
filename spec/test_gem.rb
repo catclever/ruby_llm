@@ -9,17 +9,17 @@ puts "Testing OpenAI Format..."
 openai = RubyLlm::LLMService.new(
   format: 'openai',
   model: 'gpt-4o',
-  api_key: ENV['OPENAI_API_KEY']
+  api_key: ENV['OPENAI_API_KEY'] || 'fake-key'
 )
 
 response = openai.call("Respond with 'Hello from OpenAI!'")
-puts "OpenAI Format Response (Provider: #{response.provider}): #{response.content}\n\n"
+puts "OpenAI Format Response (Format: #{response.format_name}): #{response.content}\n\n"
 
 puts "Testing Anthropic Stream Format..."
 anthropic = RubyLlm::LLMService.new(
   format: 'anthropic',
   model: 'claude-3-5-sonnet-20240620',
-  api_key: ENV['ANTHROPIC_API_KEY']
+  api_key: ENV['ANTHROPIC_API_KEY'] || 'fake-key'
 )
 
 print "Anthropic Streaming Response: "

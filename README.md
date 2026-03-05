@@ -42,14 +42,13 @@ require 'ruby_llm'
 # Initialize the OpenAI service
 openai = RubyLlm::LLMService.new(
   format: 'openai',
-  model: 'gpt-4o'
-  # provider: 'openai' # Optional, defaults to format parsing
-  # api_key: '...' # Alternatively, pass explicitly if not using ENV variables
+  model: 'gpt-4o',
+  api_key: ENV['OPENAI_API_KEY']
 )
 
 # Standard Call
 response = openai.call("Hello! Please explain Quantum Computing in one sentence.")
-puts response.provider # => "openai"
+puts response.format_name # => "openai"
 puts response.content
 # => "Quantum computing is an area of study focused on developing computer technology based on the principles of quantum theory..."
 
@@ -58,17 +57,16 @@ puts response.usage          # => {:prompt_tokens=>15, :completion_tokens=>24...
 puts response.finish_reason  # => "stop"
 ```
 
-### 2. Custom Providers (e.g. DeepSeek using OpenAI Format)
+### 2. Custom Endpoints (e.g. DeepSeek using OpenAI Format)
 
 You can easily interact with API providers that mimic standard formats:
 
 ```ruby
 deepseek = RubyLlm::LLMService.new(
   format: 'openai',               # It uses standard OpenAI API structure
-  provider: 'deepseek',           # Distinguishes this connection
   model: 'deepseek-chat', 
-  base_url: 'https://api.deepseek.com/v1',
   api_key: ENV['DEEPSEEK_API_KEY'],
+  base_url: 'https://api.deepseek.com/v1',
   ssl_verify_none: false          # Set true for enterprise proxy configurations
 )
 
@@ -82,7 +80,8 @@ All providers (OpenAI, Anthropic, Gemini) support streaming HTTP chunks using a 
 ```ruby
 anthropic = RubyLlm::LLMService.new(
   format: 'anthropic',
-  model: 'claude-3-5-sonnet-20240620'
+  model: 'claude-3-5-sonnet-20240620',
+  api_key: ENV['ANTHROPIC_API_KEY']
 )
 
 anthropic.call("Give me a 3-sentence summary of Ruby.") do |chunk, buffer|
@@ -146,7 +145,11 @@ end
 ### 6. Embeddings extraction
 
 ```ruby
-gemini = RubyLlm::LLMService.new(format: 'gemini', model: 'text-embedding-004')
+gemini = RubyLlm::LLMService.new(
+  format: 'gemini', 
+  model: 'text-embedding-004',
+  api_key: ENV['GEMINI_API_KEY']
+)
 
 vector = gemini.get_embedding("Let's test this embedding string.")
 puts vector.size # => e.g., 768

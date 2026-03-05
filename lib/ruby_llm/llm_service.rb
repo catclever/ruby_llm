@@ -15,16 +15,15 @@ module RubyLlm
     SUPPORTED_FORMATS = %w[openai anthropic gemini].freeze
     DEFAULT_TIMEOUT = 30
 
-    attr_reader :format_name, :provider_name, :model, :default_temperature, :default_max_tokens
+    attr_reader :format_name, :model, :default_temperature, :default_max_tokens
     attr_reader :adapter
 
     ##
     # Initialize LLM Service
     def initialize(
+      api_key:,
       format: 'openai',
-      provider: nil,
       model: 'gpt-4o',
-      api_key: nil,
       base_url: nil,
       temperature: 0.7,
       max_tokens: 2000,
@@ -34,13 +33,13 @@ module RubyLlm
       @format_name = format.to_s.downcase
       raise ArgumentError, "Unsupported format: #{@format_name}" unless SUPPORTED_FORMATS.include?(@format_name)
 
-      @provider_name = provider || @format_name
       @model = model
       @default_temperature = temperature
       @default_max_tokens = max_tokens
       @logger = logger || Logger.new($stdout)
       
-      api_key ||= ENV["#{(@provider || @format_name).upcase}_API_KEY"] || ''
+      raise ArgumentError, "api_key is required" if api_key.nil? || api_key.empty?
+      
       base_url ||= default_base_url_for(@format_name)
       
       adapter_class = case @format_name
@@ -56,10 +55,10 @@ module RubyLlm
         timeout: DEFAULT_TIMEOUT,
         logger: @logger,
         ssl_verify_none: ssl_verify_none,
-        provider_name: @provider_name
+        format_name: @format_name
       )
 
-      @logger.info("RubyLlm initialized: provider=#{@provider_name} format=#{@format_name} model=#{@model}")
+      @logger.info("RubyLlm initialized: format=#{@format_name} model=#{@model}")
     end
 
     ##

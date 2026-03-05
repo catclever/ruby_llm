@@ -52,7 +52,7 @@ module RubyLlm
         RubyLlm::Response.new(
           content: content,
           model: @model,
-          provider: @provider_name,
+          format_name: @format_name,
           usage: usage ? {
             prompt_tokens: usage[:prompt_tokens],
             completion_tokens: usage[:completion_tokens],
@@ -88,14 +88,14 @@ module RubyLlm
         RubyLlm::Response.new(
           content: content_buffer,
           model: @model,
-          provider: @provider_name,
+          format_name: @format_name,
           finish_reason: 'stop', # Assuming normal completion for stream right now
           raw_response: { stream_result: content_buffer }
         )
       end
 
       def empty_response
-        RubyLlm::Response.new(content: '', model: @model, provider: @provider_name)
+        RubyLlm::Response.new(content: '', model: @model, format_name: @format_name)
       end
     end
   end

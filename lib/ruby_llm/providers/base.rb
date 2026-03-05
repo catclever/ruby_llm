@@ -8,15 +8,15 @@ require 'logger'
 module RubyLlm
   module Providers
     class Base
-      attr_reader :model, :api_key, :base_url, :timeout, :logger, :provider_name, :ssl_verify_none
+      attr_reader :model, :api_key, :base_url, :timeout, :logger, :format_name, :ssl_verify_none
 
-      def initialize(model:, api_key:, base_url:, timeout:, logger: nil, provider_name: nil, ssl_verify_none: false)
+      def initialize(model:, api_key:, base_url:, timeout:, logger: nil, format_name: nil, ssl_verify_none: false)
         @model = model
         @api_key = api_key
         @base_url = base_url
         @timeout = timeout
         @logger = logger || Logger.new($stdout)
-        @provider_name = provider_name
+        @format_name = format_name
         @ssl_verify_none = ssl_verify_none
       end
 

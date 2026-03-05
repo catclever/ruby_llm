@@ -2,12 +2,12 @@
 
 module RubyLlm
   class Response
-    attr_reader :content, :model, :provider, :usage, :finish_reason, :raw_response, :tool_calls
+    attr_reader :content, :model, :format_name, :usage, :finish_reason, :raw_response, :tool_calls
 
-    def initialize(content:, model:, provider:, usage: nil, finish_reason: nil, tool_calls: nil, raw_response: nil)
+    def initialize(content:, model:, format_name:, usage: nil, finish_reason: nil, tool_calls: nil, raw_response: nil)
       @content = content
       @model = model
-      @provider = provider
+      @format_name = format_name
       @usage = usage # { prompt_tokens:, completion_tokens:, total_tokens: }
       @finish_reason = finish_reason
       @tool_calls = tool_calls || []
@@ -22,7 +22,7 @@ module RubyLlm
       {
         content: @content,
         model: @model,
-        provider: @provider,
+        format_name: @format_name,
         usage: @usage,
         finish_reason: @finish_reason,
         tool_calls: @tool_calls
