@@ -71,7 +71,7 @@ module RubyLlm
         RubyLlm::Response.new(
           content: text_content,
           model: @model,
-          provider: 'gemini',
+          provider: @provider_name,
           usage: usage_metadata ? {
             prompt_tokens: usage_metadata[:promptTokenCount],
             completion_tokens: usage_metadata[:candidatesTokenCount],
@@ -108,11 +108,11 @@ module RubyLlm
           end
         end
 
-        RubyLlm::Response.new(content: content_buffer, model: @model, provider: 'gemini', finish_reason: 'stop')
+        RubyLlm::Response.new(content: content_buffer, model: @model, provider: @provider_name, finish_reason: 'stop')
       end
 
       def empty_response
-        RubyLlm::Response.new(content: '', model: @model, provider: 'gemini')
+        RubyLlm::Response.new(content: '', model: @model, provider: @provider_name)
       end
     end
   end

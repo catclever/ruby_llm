@@ -82,7 +82,7 @@ module RubyLlm
         RubyLlm::Response.new(
           content: text_content,
           model: @model,
-          provider: 'anthropic',
+          provider: @provider_name,
           usage: usage ? {
             prompt_tokens: usage[:input_tokens],
             completion_tokens: usage[:output_tokens],
@@ -118,11 +118,11 @@ module RubyLlm
           end
         end
 
-        RubyLlm::Response.new(content: content_buffer, model: @model, provider: 'anthropic', finish_reason: 'stop')
+        RubyLlm::Response.new(content: content_buffer, model: @model, provider: @provider_name, finish_reason: 'stop')
       end
 
       def empty_response
-        RubyLlm::Response.new(content: '', model: @model, provider: 'anthropic')
+        RubyLlm::Response.new(content: '', model: @model, provider: @provider_name)
       end
     end
   end

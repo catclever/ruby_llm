@@ -5,19 +5,19 @@ Dotenv.load(File.expand_path('../../.env', __dir__))
 
 require_relative '../lib/ruby_llm'
 
-puts "Testing OpenAI Provider..."
+puts "Testing OpenAI Format..."
 openai = RubyLlm::LLMService.new(
-  provider: 'openai',
+  format: 'openai',
   model: 'gpt-4o',
   api_key: ENV['OPENAI_API_KEY']
 )
 
 response = openai.call("Respond with 'Hello from OpenAI!'")
-puts "OpenAI Response: #{response.content}\n\n"
+puts "OpenAI Format Response (Provider: #{response.provider}): #{response.content}\n\n"
 
-puts "Testing Anthropic Stream Provider..."
+puts "Testing Anthropic Stream Format..."
 anthropic = RubyLlm::LLMService.new(
-  provider: 'anthropic',
+  format: 'anthropic',
   model: 'claude-3-5-sonnet-20240620',
   api_key: ENV['ANTHROPIC_API_KEY']
 )

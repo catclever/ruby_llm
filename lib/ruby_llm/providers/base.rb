@@ -8,14 +8,16 @@ require 'logger'
 module RubyLlm
   module Providers
     class Base
-      attr_reader :model, :api_key, :base_url, :timeout, :logger
+      attr_reader :model, :api_key, :base_url, :timeout, :logger, :provider_name, :ssl_verify_none
 
-      def initialize(model:, api_key:, base_url:, timeout:, logger: nil)
+      def initialize(model:, api_key:, base_url:, timeout:, logger: nil, provider_name: nil, ssl_verify_none: false)
         @model = model
         @api_key = api_key
         @base_url = base_url
         @timeout = timeout
         @logger = logger || Logger.new($stdout)
+        @provider_name = provider_name
+        @ssl_verify_none = ssl_verify_none
       end
 
       # @abstract
@@ -38,6 +40,7 @@ module RubyLlm
       def post_json(uri, payload, auth_header: nil, custom_headers: nil, skip_auth: false, &block)
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = (uri.scheme == 'https')
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE if @ssl_verify_none
         http.read_timeout = @timeout
         http.open_timeout = @timeout
 

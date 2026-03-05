@@ -10,37 +10,40 @@ require_relative 'providers/gemini'
 module RubyLlm
   ##
   # LLM Service Facade
-  # Supported providers: 'openai', 'anthropic', 'gemini'
+  # Supported formats: 'openai', 'anthropic', 'gemini'
   class LLMService
-    SUPPORTED_PROVIDERS = %w[openai anthropic gemini].freeze
+    SUPPORTED_FORMATS = %w[openai anthropic gemini].freeze
     DEFAULT_TIMEOUT = 30
 
-    attr_reader :provider_name, :model, :default_temperature, :default_max_tokens
+    attr_reader :format_name, :provider_name, :model, :default_temperature, :default_max_tokens
     attr_reader :adapter
 
     ##
     # Initialize LLM Service
     def initialize(
-      provider: 'openai',
+      format: 'openai',
+      provider: nil,
       model: 'gpt-4o',
       api_key: nil,
       base_url: nil,
       temperature: 0.7,
       max_tokens: 2000,
-      logger: nil
+      logger: nil,
+      ssl_verify_none: false
     )
-      @provider_name = provider.to_s.downcase
-      raise ArgumentError, "Unsupported provider: #{@provider_name}" unless SUPPORTED_PROVIDERS.include?(@provider_name)
+      @format_name = format.to_s.downcase
+      raise ArgumentError, "Unsupported format: #{@format_name}" unless SUPPORTED_FORMATS.include?(@format_name)
 
+      @provider_name = provider || @format_name
       @model = model
       @default_temperature = temperature
       @default_max_tokens = max_tokens
       @logger = logger || Logger.new($stdout)
       
-      api_key ||= ENV["#{provider.upcase}_API_KEY"] || ''
-      base_url ||= default_base_url_for(provider)
+      api_key ||= ENV["#{(@provider || @format_name).upcase}_API_KEY"] || ''
+      base_url ||= default_base_url_for(@format_name)
       
-      adapter_class = case @provider_name
+      adapter_class = case @format_name
                       when 'openai' then Providers::OpenAi
                       when 'anthropic' then Providers::Anthropic
                       when 'gemini' then Providers::Gemini
@@ -51,10 +54,12 @@ module RubyLlm
         api_key: api_key,
         base_url: base_url.chomp('/'),
         timeout: DEFAULT_TIMEOUT,
-        logger: @logger
+        logger: @logger,
+        ssl_verify_none: ssl_verify_none,
+        provider_name: @provider_name
       )
 
-      @logger.info("RubyLlm initialized: provider=#{@provider_name} model=#{@model}")
+      @logger.info("RubyLlm initialized: provider=#{@provider_name} format=#{@format_name} model=#{@model}")
     end
 
     ##
@@ -126,8 +131,8 @@ module RubyLlm
 
     private
 
-    def default_base_url_for(provider)
-      case provider.to_s.downcase
+    def default_base_url_for(format_name)
+      case format_name.to_s.downcase
       when 'openai' then 'https://api.openai.com/v1'
       when 'anthropic' then 'https://api.anthropic.com/v1'
       when 'gemini' then 'https://generativelanguage.googleapis.com/v1beta'
