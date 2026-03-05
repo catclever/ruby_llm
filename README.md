@@ -75,7 +75,40 @@ deepseek = RubyLlm::LLMService.new(
 response = deepseek.call("Please write a quick sort in Ruby.")
 ```
 
-### 4. Streaming Responses (Yield Block)
+### 4. Initialization via YAML Profile
+
+To cleanly manage different providers without hardcoding configurations into your application, you can use a YAML profile file. 
+
+Create a `llm.yml` file:
+```yaml
+openai:
+  format: "openai"
+  model: "gpt-4o"
+  api_key: "ENV['OPENAI_API_KEY']"
+
+deepseek:
+  format: "openai"
+  base_url: "https://api.deepseek.com/v1"
+  model: "deepseek-chat"
+  api_key: "${DEEPSEEK_API_KEY}"
+  ssl_verify_none: true
+```
+
+Then load the specific profile during service initialization:
+
+```ruby
+# The `format` explicitly resolves to the profile key (e.g. `openai`) 
+# when no `name` or `profile_name` is provided inside the hash.
+deepseek = RubyLlm::LLMService.new(
+  profile: 'path/to/llm.yml',
+  format: 'deepseek'
+)
+
+# Equivalent explicit dictionary form:
+# deepseek = RubyLlm::LLMService.new(profile: { path: 'path/to/llm.yml', name: 'deepseek' })
+```
+
+### 5. Streaming Responses (Yield Block)
 
 All formats support streaming HTTP chunks using a block yield. The method yields `(delta, full_buffer)`.
 
@@ -93,7 +126,7 @@ anthropic.call("Give me a 3-sentence summary of Ruby.") do |chunk, buffer|
 end
 ```
 
-### 5. Using System Prompts and Conversation History
+### 6. Using System Prompts and Conversation History
 
 ```ruby
 history = [
@@ -111,7 +144,7 @@ response = anthropic.call_with_system(
 puts response.content # => "Your name is Bob."
 ```
 
-### 6. Function / Tool Calling
+### 7. Function / Tool Calling
 
 You can pass an array of tools defined in the format standard to your LLM provider.
 
@@ -140,7 +173,7 @@ if response.has_tool_calls?
 end
 ```
 
-### 7. Embeddings extraction
+### 8. Embeddings extraction
 
 ```ruby
 gemini = RubyLlm::LLMService.new(
@@ -215,7 +248,39 @@ deepseek = RubyLlm::LLMService.new(
 response = deepseek.call("请用 Ruby 写一个快速排序。")
 ```
 
-### 4. 流式响应 (Streaming Yield Block)
+### 4. 通过 YAML 配置文件初始化
+
+为了避免在代码里硬编码大模型配置，你可以提供一个统一的 yaml profile 进行加载解耦。
+
+创建一个 `llm.yml`:
+```yaml
+openai:
+  format: "openai"
+  model: "gpt-4o"
+  api_key: "ENV['OPENAI_API_KEY']"
+
+deepseek:
+  format: "openai"
+  base_url: "https://api.deepseek.com/v1"
+  model: "deepseek-chat"
+  api_key: "${DEEPSEEK_API_KEY}"
+  ssl_verify_none: true
+```
+
+只需在初始化时传入文件路径与使用的配置节点名即可：
+
+```ruby
+# 如果仅传入 profile 的地址，它会自动以 format 名称作为目标 Profile Name 进行解析
+deepseek = RubyLlm::LLMService.new(
+  profile: 'path/to/llm.yml',
+  format: 'deepseek'
+)
+
+# 它等同于显式的 Hash 声明：
+# deepseek = RubyLlm::LLMService.new(profile: { path: 'path/to/llm.yml', name: 'deepseek' })
+```
+
+### 5. 流式响应 (Streaming Yield Block)
 
 所有的 API 格式都原生支持通过 Block yield 的方式实现 HTTP 分块流式读取。方法向后传递 `(delta, full_buffer)`。
 
@@ -233,7 +298,7 @@ anthropic.call("给我写一个 3 句话的 Ruby 简介。") do |chunk, buffer|
 end
 ```
 
-### 5. 系统提示词与多轮对话支持
+### 6. 系统提示词与多轮对话支持
 
 ```ruby
 history = [
@@ -251,7 +316,7 @@ response = anthropic.call_with_system(
 puts response.content # => "你的名字是 Bob。"
 ```
 
-### 6. 工具/函数调用 (Function Calling)
+### 7. 工具/函数调用 (Function Calling)
 
 你可以按照目标格式的规范定义 `tools` 数组并将其传入。
 
@@ -280,7 +345,7 @@ if response.has_tool_calls?
 end
 ```
 
-### 7. 提取语义向量 (Embeddings)
+### 8. 提取语义向量 (Embeddings)
 
 ```ruby
 gemini = RubyLlm::LLMService.new(

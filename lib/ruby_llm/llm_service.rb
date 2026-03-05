@@ -2,6 +2,7 @@
 
 require 'logger'
 require_relative 'response'
+require_relative 'profile'
 require_relative 'providers/base'
 require_relative 'providers/openai'
 require_relative 'providers/anthropic'
@@ -21,15 +22,29 @@ module RubyLlm
     ##
     # Initialize LLM Service
     def initialize(
-      api_key:,
+      api_key: nil,
       format: 'openai',
       model: 'gpt-4o',
       base_url: nil,
       temperature: 0.7,
       max_tokens: 2000,
       logger: nil,
-      ssl_verify_none: false
+      ssl_verify_none: false,
+      profile: nil # A path to a YAML file, or a hash { path: 'path/to/llm.yml', name: 'openai' }
     )
+      if profile
+        profile_path = profile.is_a?(Hash) ? profile[:path] : profile
+        profile_name = profile.is_a?(Hash) ? profile[:name] : format
+        
+        prof = RubyLlm::Profile.load(profile_path, profile_name)
+        
+        format = prof.format_name || format
+        model = prof.model || model
+        api_key = prof.api_key || api_key
+        base_url = prof.base_url || base_url
+        ssl_verify_none = prof.ssl_verify_none || ssl_verify_none
+      end
+
       @format_name = format.to_s.downcase
       raise ArgumentError, "Unsupported format: #{@format_name}" unless SUPPORTED_FORMATS.include?(@format_name)
 

@@ -15,11 +15,10 @@ openai = RubyLlm::LLMService.new(
 response = openai.call("Respond with 'Hello from OpenAI!'")
 puts "OpenAI Format Response (Format: #{response.format_name}): #{response.content}\n\n"
 
-puts "Testing Anthropic Stream Format..."
+puts "Testing Anthropic Profile Format..."
 anthropic = RubyLlm::LLMService.new(
-  format: 'anthropic',
-  model: 'claude-3-5-sonnet-20240620',
-  api_key: ENV['ANTHROPIC_API_KEY'] || 'fake-key'
+  profile: 'spec/fixtures/llm.yml',
+  format: 'anthropic' # This maps to the key in the YAML file automatically if name isn't supplied
 )
 
 print "Anthropic Streaming Response: "
