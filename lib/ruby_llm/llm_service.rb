@@ -23,27 +23,30 @@ module RubyLlm
     # Initialize LLM Service
     def initialize(
       api_key: nil,
-      format: 'openai',
-      model: 'gpt-4o',
+      format: nil,
+      model: nil,
       base_url: nil,
       temperature: 0.7,
       max_tokens: 2000,
       logger: nil,
-      ssl_verify_none: false,
-      profile: nil # A path to a YAML file, or a hash { path: 'path/to/llm.yml', name: 'openai' }
+      ssl_verify_none: nil,
+      profile_name: nil,
+      profile_path: nil
     )
-      if profile
-        profile_path = profile.is_a?(Hash) ? profile[:path] : profile
-        profile_name = profile.is_a?(Hash) ? profile[:name] : format
+      if profile_name
+        prof = RubyLlm::Profile.load(profile_name, file_path: profile_path)
         
-        prof = RubyLlm::Profile.load(profile_path, profile_name)
-        
-        format = prof.format_name || format
-        model = prof.model || model
-        api_key = prof.api_key || api_key
-        base_url = prof.base_url || base_url
-        ssl_verify_none = prof.ssl_verify_none || ssl_verify_none
+        format ||= prof.format_name
+        model ||= prof.model
+        api_key ||= prof.api_key
+        base_url ||= prof.base_url
+        ssl_verify_none = prof.ssl_verify_none if ssl_verify_none.nil?
       end
+
+      # Set defaults if not provided by arguments or profile
+      format ||= 'openai'
+      model ||= 'gpt-4o'
+      ssl_verify_none = false if ssl_verify_none.nil?
 
       @format_name = format.to_s.downcase
       raise ArgumentError, "Unsupported format: #{@format_name}" unless SUPPORTED_FORMATS.include?(@format_name)

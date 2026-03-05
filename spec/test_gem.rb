@@ -17,8 +17,8 @@ puts "OpenAI Format Response (Format: #{response.format_name}): #{response.conte
 
 puts "Testing Anthropic Profile Format..."
 anthropic = RubyLlm::LLMService.new(
-  profile: 'spec/fixtures/llm.yml',
-  format: 'anthropic' # This maps to the key in the YAML file automatically if name isn't supplied
+  profile_name: 'anthropic',
+  profile_path: 'spec/fixtures/llm.yml'
 )
 
 print "Anthropic Streaming Response: "

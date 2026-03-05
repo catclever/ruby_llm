@@ -9,17 +9,29 @@ module RubyLlm
   class Profile
     attr_reader :name, :format_name, :model, :base_url, :api_key, :ssl_verify_none
 
-    def self.load(file_path, profile_name)
-      raise ArgumentError, "Profile file not found: #{file_path}" unless File.exist?(file_path)
+    DEFAULT_PATHS = [
+      'llm.yml',
+      'config/llm.yml',
+      '.agent/llm.yml'
+    ].freeze
 
-      data = YAML.load_file(file_path)
+    def self.load(profile_name, file_path: nil)
+      path = file_path || find_default_path
+      raise ArgumentError, "Could not find a profile YAML file in default locations" unless path
+      raise ArgumentError, "Profile file not found: #{path}" unless File.exist?(path)
+
+      data = YAML.load_file(path)
       
       # Support both string and symbol keys
       profile_data = data[profile_name.to_s] || data[profile_name.to_sym]
       
-      raise ArgumentError, "Profile '#{profile_name}' not found in #{file_path}" unless profile_data
+      raise ArgumentError, "Profile '#{profile_name}' not found in #{path}" unless profile_data
 
       new(name: profile_name, data: profile_data)
+    end
+
+    def self.find_default_path
+      DEFAULT_PATHS.find { |p| File.exist?(p) }
     end
 
     def initialize(name:, data:)
