@@ -26,7 +26,17 @@ module RubyLlm
           temperature: temperature
         }
         payload[:system] = system_content if system_content
-        payload[:tools] = tools if tools && !tools.empty?
+        
+        if tools && !tools.empty?
+          payload[:tools] = tools.map do |t| 
+             t_function = t[:function] || t
+             {
+               name: t_function[:name],
+               description: t_function[:description],
+               input_schema: t_function[:parameters]
+             }
+          end
+        end
 
         headers = {
           'x-api-key' => @api_key,
@@ -61,6 +71,7 @@ module RubyLlm
                         .join
 
         # Extract tool calls if any
+        # Some GLM/Anthropic endpoints merge tool usage unexpectedly
         tool_blocks = content_blocks.select { |block| block[:type] == 'tool_use' }
         tool_calls = nil
         unless tool_blocks.empty?
