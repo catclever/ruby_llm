@@ -1,13 +1,29 @@
 # RubyLlm
 
-`RubyLlm` is a lightweight, dependency-free (except for standard network libraries) Ruby adapter for unifying LLM interactions. It abstracts the differences between major AI providers into a single straightforward API, supporting normal completion, streaming, and tool/function calling logic out of the box.
+[![Ruby](https://img.shields.io/badge/Language-Ruby-red.svg)](https://www.ruby-lang.org/)
 
-Currently Supported Formats:
+**A clean, lightweight, and unified interface for LLM providers (OpenAI, Anthropic, Gemini).**
+
+`RubyLlm` abstract the differences between major AI providers into a single straightforward API, supporting normal completion, streaming, and tool/function calling logic out of the box.
+
+---
+
+## 📖 Documentation / 文档
+
+- [English Version](#english-version)
+- [中文版本](#chinese-version)
+
+---
+
+<a name="english-version"></a>
+## English Version
+
+### Supported Formats
 - `openai` (GPT-3.5, GPT-4, DeepSeek, etc.)
 - `anthropic` (Claude 3, Claude 3.5, etc.)
 - `gemini` (Gemini Pro, Flash, etc.)
 
-## Installation
+### 1. Installation
 
 Add this line to your application's Gemfile:
 
@@ -20,26 +36,13 @@ And then execute:
 bundle install
 ```
 
-## Configuration & Setup
+### 2. Basic Initialization & Text Generation
 
-`RubyLlm` requires the respective provider API keys to function. The easiest way to configure these is by setting environment variables. If you are using `dotenv`, place these in your `.env` file:
-
-```env
-OPENAI_API_KEY=sk-proj-xxx...
-ANTHROPIC_API_KEY=sk-ant-xxx...
-GEMINI_API_KEY=AIzaSyBxxx...
-```
-
-When initializing the service, if you do not explicitly pass an `api_key`, it will automatically search the environment for `[PROVIDER]_API_KEY`.
-
-## Usage Exampels
-
-### 1. Basic Initialization & Text Generation
+Initialize the service by specifying the API `format` and explicitly providing your `api_key`.
 
 ```ruby
 require 'ruby_llm'
 
-# Initialize the OpenAI service
 openai = RubyLlm::LLMService.new(
   format: 'openai',
   model: 'gpt-4o',
@@ -49,17 +52,16 @@ openai = RubyLlm::LLMService.new(
 # Standard Call
 response = openai.call("Hello! Please explain Quantum Computing in one sentence.")
 puts response.format_name # => "openai"
-puts response.content
-# => "Quantum computing is an area of study focused on developing computer technology based on the principles of quantum theory..."
+puts response.content     # => "Quantum computing is..."
 
 # Check Token Usage
 puts response.usage          # => {:prompt_tokens=>15, :completion_tokens=>24...}
 puts response.finish_reason  # => "stop"
 ```
 
-### 2. Custom Endpoints (e.g. DeepSeek using OpenAI Format)
+### 3. Custom Endpoints (e.g. DeepSeek using OpenAI Format)
 
-You can easily interact with API providers that mimic standard formats:
+You can easily interact with API providers that mimic standard formats by supplying a custom `base_url`:
 
 ```ruby
 deepseek = RubyLlm::LLMService.new(
@@ -73,9 +75,9 @@ deepseek = RubyLlm::LLMService.new(
 response = deepseek.call("Please write a quick sort in Ruby.")
 ```
 
-### 3. Streaming Responses (Yield Block)
+### 4. Streaming Responses (Yield Block)
 
-All providers (OpenAI, Anthropic, Gemini) support streaming HTTP chunks using a block yield. The method yields `(delta, full_buffer)`.
+All formats support streaming HTTP chunks using a block yield. The method yields `(delta, full_buffer)`.
 
 ```ruby
 anthropic = RubyLlm::LLMService.new(
@@ -91,7 +93,7 @@ anthropic.call("Give me a 3-sentence summary of Ruby.") do |chunk, buffer|
 end
 ```
 
-### 3. Using System Prompts and Conversation History
+### 5. Using System Prompts and Conversation History
 
 ```ruby
 history = [
@@ -106,13 +108,12 @@ response = anthropic.call_with_system(
   temperature: 0.2
 )
 
-puts response.content
-# => "Your name is Bob."
+puts response.content # => "Your name is Bob."
 ```
 
-### 4. Function / Tool Calling
+### 6. Function / Tool Calling
 
-You can pass an array of tools defined in the format standard to your LLM provider. When the LLM decides to substitute the tool, it will populate the `tool_calls` attribute of the response.
+You can pass an array of tools defined in the format standard to your LLM provider.
 
 ```ruby
 tools = [{
@@ -134,15 +135,12 @@ response = openai.call("What is the weather like in Boston?", tools: tools)
 
 if response.has_tool_calls?
   call_request = response.tool_calls.first
-  puts call_request[:function][:name] 
-  # => "get_current_weather"
-  
-  puts call_request[:function][:arguments] 
-  # => "{\"location\":\"Boston, MA\"}"
+  puts call_request[:function][:name]      # => "get_current_weather"
+  puts call_request[:function][:arguments] # => "{\"location\":\"Boston, MA\"}"
 end
 ```
 
-### 6. Embeddings extraction
+### 7. Embeddings extraction
 
 ```ruby
 gemini = RubyLlm::LLMService.new(
@@ -152,5 +150,145 @@ gemini = RubyLlm::LLMService.new(
 )
 
 vector = gemini.get_embedding("Let's test this embedding string.")
+puts vector.size # => e.g., 768
+```
+
+---
+
+<a name="chinese-version"></a>
+## 中文版本
+
+### 支持的 API 格式 (Formats)
+- `openai` (GPT-3.5, GPT-4, DeepSeek 等等)
+- `anthropic` (Claude 3, Claude 3.5 等等)
+- `gemini` (Gemini Pro, Flash 等等)
+
+### 1. 安装
+
+在项目的 Gemfile 中添加：
+
+```ruby
+gem 'ruby_llm', path: 'path/to/ruby_llm'
+```
+
+然后执行：
+```bash
+bundle install
+```
+
+### 2. 基础初始化与文本生成
+
+初始化服务时，你需要指定 API `format` 并且**显式传入**你的 `api_key`。
+
+```ruby
+require 'ruby_llm'
+
+openai = RubyLlm::LLMService.new(
+  format: 'openai',
+  model: 'gpt-4o',
+  api_key: ENV['OPENAI_API_KEY']
+)
+
+# 基础调用
+response = openai.call("你好！请用一句话解释量子计算。")
+puts response.format_name # => "openai"
+puts response.content     # => "量子计算是一种..."
+
+# 查看 Token 消耗和停止原因
+puts response.usage          # => {:prompt_tokens=>15, :completion_tokens=>24...}
+puts response.finish_reason  # => "stop"
+```
+
+### 3. 连接自定义端点 (以用 OpenAI 格式调 DeepSeek 为例)
+
+你可以通过自定义 `base_url` 来轻松连接那些兼容主流 API 格式的第三方大模型：
+
+```ruby
+deepseek = RubyLlm::LLMService.new(
+  format: 'openai',               # 底层使用标准的 OpenAI API 结构请求
+  model: 'deepseek-chat', 
+  api_key: ENV['DEEPSEEK_API_KEY'],
+  base_url: 'https://api.deepseek.com/v1',
+  ssl_verify_none: false          # 在部分企业代理环境下如果遇到证书问题可设为 true
+)
+
+response = deepseek.call("请用 Ruby 写一个快速排序。")
+```
+
+### 4. 流式响应 (Streaming Yield Block)
+
+所有的 API 格式都原生支持通过 Block yield 的方式实现 HTTP 分块流式读取。方法向后传递 `(delta, full_buffer)`。
+
+```ruby
+anthropic = RubyLlm::LLMService.new(
+  format: 'anthropic',
+  model: 'claude-3-5-sonnet-20240620',
+  api_key: ENV['ANTHROPIC_API_KEY']
+)
+
+anthropic.call("给我写一个 3 句话的 Ruby 简介。") do |chunk, buffer|
+  print chunk
+  # 'chunk' 是这一次 tick 接收到的增量文本
+  # 'buffer' 是截止目前接收到的所有完整文本
+end
+```
+
+### 5. 系统提示词与多轮对话支持
+
+```ruby
+history = [
+  { role: 'user', content: '你好，我是 Bob。' },
+  { role: 'assistant', content: '你好 Bob！我能帮你什么？' }
+]
+
+response = anthropic.call_with_system(
+  system_prompt: '你是一个乐于助人的助手，说话总是很简短。',
+  user_prompt: '我的名字是什么？',
+  conversation_history: history,
+  temperature: 0.2
+)
+
+puts response.content # => "你的名字是 Bob。"
+```
+
+### 6. 工具/函数调用 (Function Calling)
+
+你可以按照目标格式的规范定义 `tools` 数组并将其传入。
+
+```ruby
+tools = [{
+  type: "function",
+  function: {
+    name: "get_current_weather",
+    description: "获取给定地点的当前天气",
+    parameters: {
+      type: "object",
+      properties: {
+        location: { type: "string", description: "城市和州，例如 San Francisco, CA" }
+      },
+      required: ["location"]
+    }
+  }
+}]
+
+response = openai.call("波士顿今天天气怎么样？", tools: tools)
+
+if response.has_tool_calls?
+  call_request = response.tool_calls.first
+  puts call_request[:function][:name]      # => "get_current_weather"
+  puts call_request[:function][:arguments] # => "{\"location\":\"Boston, MA\"}"
+end
+```
+
+### 7. 提取语义向量 (Embeddings)
+
+```ruby
+gemini = RubyLlm::LLMService.new(
+  format: 'gemini', 
+  model: 'text-embedding-004',
+  api_key: ENV['GEMINI_API_KEY']
+)
+
+vector = gemini.get_embedding("我们来测试一下这个 embedding 字符串。")
 puts vector.size # => e.g., 768
 ```
