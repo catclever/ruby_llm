@@ -28,6 +28,7 @@ module RubyLlm
       base_url: nil,
       temperature: 0.7,
       max_tokens: 2000,
+      timeout: nil,
       logger: nil,
       ssl_verify_none: nil,
       profile_name: nil,
@@ -70,7 +71,7 @@ module RubyLlm
         model: @model,
         api_key: api_key,
         base_url: base_url.chomp('/'),
-        timeout: DEFAULT_TIMEOUT,
+        timeout: timeout || DEFAULT_TIMEOUT,
         logger: @logger,
         ssl_verify_none: ssl_verify_none,
         format_name: @format_name
