@@ -1,4 +1,4 @@
-# RubyLlm
+# RubyLLM
 
 [![Ruby](https://img.shields.io/badge/Language-Ruby-red.svg)](https://www.ruby-lang.org/)
 
