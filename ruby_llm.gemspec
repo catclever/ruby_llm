@@ -10,13 +10,13 @@ Gem::Specification.new do |spec|
 
   spec.summary = "A unified interface for LLM providers (OpenAI, Anthropic, Gemini)."
   spec.description = "A unified interface for LLM providers (OpenAI, Anthropic, Gemini)."
-  spec.homepage = "https://github.com/yourusername/ruby_llm"
+  spec.homepage = "https://github.com/catclever/ruby_llm"
   spec.required_ruby_version = ">= 3.0.0"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
+  spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/yourusername/ruby_llm"
+  spec.metadata["source_code_uri"] = "https://github.com/catclever/ruby_llm"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
