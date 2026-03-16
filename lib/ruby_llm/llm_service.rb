@@ -132,8 +132,17 @@ module RubyLlm
       temp = temperature || @default_temperature
       tokens = max_tokens || @default_max_tokens
 
+      # Sanitize messages: OpenAI API rejects assistant messages with empty content if there are tool_calls
+      sanitized_messages = messages.map do |msg|
+        if msg[:role] == 'assistant' && msg[:content] == ''
+          msg = msg.dup
+          msg.delete(:content)
+        end
+        msg
+      end
+
       @adapter.call(
-        messages: messages,
+        messages: sanitized_messages,
         temperature: temp, 
         max_tokens: tokens,
         tools: tools,
