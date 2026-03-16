@@ -44,6 +44,7 @@ module RubyLlm
 
         message = data.dig(:choices, 0, :message) || {}
         content = message[:content] || ''
+        reasoning_content = message[:reasoning_content]
         tool_calls = message[:tool_calls]
         
         usage = data[:usage]
@@ -60,7 +61,8 @@ module RubyLlm
           } : nil,
           finish_reason: finish_reason,
           tool_calls: tool_calls,
-          raw_response: data
+          raw_response: data,
+          reasoning_content: reasoning_content
         )
       end
 

@@ -132,17 +132,29 @@ module RubyLlm
       temp = temperature || @default_temperature
       tokens = max_tokens || @default_max_tokens
 
-      # Sanitize messages: OpenAI API rejects assistant messages with empty content if there are tool_calls
+      # Sanitize messages: API rejects assistant messages with empty/nil content if there are tool_calls
       sanitized_messages = messages.map do |msg|
-        role = msg[:role] || msg['role']
-        content = msg[:content] || msg['content']
+        # Duplicating to avoid mutating the original array passed by reference
+        clean_msg = msg.dup
+        role = clean_msg[:role] || clean_msg['role']
+        content = clean_msg[:content] || clean_msg['content']
         
-        if role.to_s == 'assistant' && (content == '' || content.nil?)
-          msg = msg.dup
-          msg.delete(:content)
-          msg.delete('content')
+        if role.to_s == 'assistant'
+          # Strip empty/nil content
+          if content.nil? || content.to_s.strip.empty?
+            clean_msg.delete(:content)
+            clean_msg.delete('content')
+          end
+          
+          # Special case for Moonshot/Kimi 'thinking' models: 
+          # If there are tool_calls, it strictly REQUIRES `reasoning_content` to be present.
+          if clean_msg.key?(:tool_calls) || clean_msg.key?('tool_calls')
+            if @model.to_s.include?('kimi') || (@adapter.base_url && @adapter.base_url.to_s.include?('moonshot'))
+              clean_msg[:reasoning_content] = "" unless clean_msg.key?(:reasoning_content) || clean_msg.key?('reasoning_content')
+            end
+          end
         end
-        msg
+        clean_msg
       end
 
       @adapter.call(
