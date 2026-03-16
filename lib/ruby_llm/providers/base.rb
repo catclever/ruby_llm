@@ -57,7 +57,6 @@ module RubyLlm
 
         request.body = payload.to_json
 
-        @logger.error("DEBUG PAYLOAD JSON: #{payload.to_json}")
         @logger.debug("POST #{uri} with payload: #{payload.to_json}")
 
         buffer = ""
