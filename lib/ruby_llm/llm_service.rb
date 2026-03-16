@@ -134,9 +134,13 @@ module RubyLlm
 
       # Sanitize messages: OpenAI API rejects assistant messages with empty content if there are tool_calls
       sanitized_messages = messages.map do |msg|
-        if msg[:role] == 'assistant' && msg[:content] == ''
+        role = msg[:role] || msg['role']
+        content = msg[:content] || msg['content']
+        
+        if role.to_s == 'assistant' && (content == '' || content.nil?)
           msg = msg.dup
           msg.delete(:content)
+          msg.delete('content')
         end
         msg
       end
