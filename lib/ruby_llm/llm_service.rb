@@ -26,7 +26,7 @@ module RubyLlm
       format: nil,
       model: nil,
       base_url: nil,
-      temperature: 0.7,
+      temperature: nil,
       max_tokens: 2000,
       timeout: nil,
       logger: nil,

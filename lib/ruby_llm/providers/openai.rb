@@ -13,7 +13,7 @@ module RubyLlm
           messages: messages,
           temperature: temperature,
           max_tokens: max_tokens
-        }
+        }.compact
 
         payload[:tools] = tools if tools && !tools.empty?
 
