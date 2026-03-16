@@ -147,11 +147,12 @@ module RubyLlm
           end
           
           # Special case for Moonshot/Kimi 'thinking' models: 
-          # If there are tool_calls, it strictly REQUIRES `reasoning_content` to be present.
-          if clean_msg.key?(:tool_calls) || clean_msg.key?('tool_calls')
-            if @model.to_s.include?('kimi') || (@adapter.base_url && @adapter.base_url.to_s.include?('moonshot'))
-              clean_msg[:reasoning_content] = "" unless clean_msg.key?(:reasoning_content) || clean_msg.key?('reasoning_content')
-            end
+          # It STRICTLY REQUIRES `reasoning_content` to be present for ANY assistant message
+          # that contains `tool_calls`, and sometimes even for normal ones if it's part of a reasoning chain.
+          # To be absolutely safe with Kimi, we inject `reasoning_content: ""` for ALL assistant messages 
+          # if it's missing, because it never hurts and prevents 400s.
+          if @model.to_s.include?('kimi') || (@adapter.base_url && @adapter.base_url.to_s.include?('moonshot'))
+            clean_msg[:reasoning_content] = "" unless clean_msg.key?(:reasoning_content) || clean_msg.key?('reasoning_content')
           end
         end
         clean_msg
