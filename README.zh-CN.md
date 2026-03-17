@@ -179,3 +179,7 @@ gemini = RubyLlm::LLMService.new(
 vector = gemini.get_embedding("我们来测试一下这个 embedding 字符串。")
 puts vector.size # => e.g., 768
 ```
+
+### 商业使用与开源协议
+
+本项目基于 [MIT License](https://opensource.org/licenses/MIT) 开源。**完全支持免费商业使用**、修改和分发。

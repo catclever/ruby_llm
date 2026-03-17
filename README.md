@@ -184,4 +184,6 @@ vector = gemini.get_embedding("Let's test this embedding string.")
 puts vector.size # => e.g., 768
 ```
 
+### License
 
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT). It fully supports commercial use.
