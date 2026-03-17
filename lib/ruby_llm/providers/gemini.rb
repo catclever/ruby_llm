@@ -2,7 +2,7 @@
 
 require_relative "base"
 
-module RubyLlm
+module RubyLLM
   module Providers
     class Gemini < Base
       def call(messages:, temperature:, max_tokens:, tools: nil, &block)
@@ -68,7 +68,7 @@ module RubyLlm
         usage_metadata = data[:usageMetadata]
         finish_reason = first_candidate[:finishReason]
 
-        RubyLlm::Response.new(
+        RubyLLM::Response.new(
           content: text_content,
           model: @model,
           format_name: @format_name,
@@ -108,11 +108,11 @@ module RubyLlm
           end
         end
 
-        RubyLlm::Response.new(content: content_buffer, model: @model, format_name: @format_name, finish_reason: 'stop')
+        RubyLLM::Response.new(content: content_buffer, model: @model, format_name: @format_name, finish_reason: 'stop')
       end
 
       def empty_response
-        RubyLlm::Response.new(content: '', model: @model, format_name: @format_name)
+        RubyLLM::Response.new(content: '', model: @model, format_name: @format_name)
       end
     end
   end

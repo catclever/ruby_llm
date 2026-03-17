@@ -1,10 +1,10 @@
-# RubyLlm
+# RubyLLM
 
 [![Ruby](https://img.shields.io/badge/Language-Ruby-red.svg)](https://www.ruby-lang.org/)
 
-**一个干净、轻量级、为 LLM 核心提供者（OpenAI, Anthropic, Gemini）设计的统一接口适配器。**
+**一个干净、轻量级、支持主流 API格式的（OpenAI, Anthropic, Gemini）的大模型接口适配器。**
 
-`RubyLlm` 将主流 AI 提供商底层的差异抽象成了同一套直白可用的 API。它开箱即用地支持普通文本生成、数据流（Streaming）和工具函数调用。
+`RubyLLM` 将主流 AI 提供商底层的差异抽象成了统一而简洁的Ruby语法。它开箱即用地支持普通文本生成、数据流（Streaming）和工具函数调用。
 
 ---
 
@@ -40,10 +40,11 @@ bundle install
 ```ruby
 require 'ruby_llm'
 
-openai = RubyLlm::LLMService.new(
-  format: 'openai',
+openai = RubyLLM::LLMService.new(
+  format: 'openai',       # 必填。指定要使用底层哪种 API 结构 (可选 'openai', 'anthropic', 'gemini')
   model: 'gpt-4o',
-  api_key: ENV['OPENAI_API_KEY']
+  api_key: ENV['OPENAI_API_KEY'],
+  base_url: 'https://api.openai.com/v1' # 可选。用于指定代理地址或兼容该 format 的其他模型端点
 )
 
 # 基础调用
@@ -61,7 +62,7 @@ puts response.finish_reason  # => "stop"
 你可以通过自定义 `base_url` 来轻松连接那些兼容主流 API 格式的第三方大模型：
 
 ```ruby
-deepseek = RubyLlm::LLMService.new(
+deepseek = RubyLLM::LLMService.new(
   format: 'openai',               # 底层使用标准的 OpenAI API 结构请求
   model: 'deepseek-chat', 
   api_key: ENV['DEEPSEEK_API_KEY'],
@@ -94,12 +95,12 @@ deepseek:
 只需在初始化时传入使用的配置节点名即可（它会按照 `llm.yml` -> `config/llm.yml` 的顺序自动嗅探文件）：
 
 ```ruby
-deepseek = RubyLlm::LLMService.new(
+deepseek = RubyLLM::LLMService.new(
   profile_name: 'deepseek'
 )
 
 # 如果想指定特定位置的 yml
-# deepseek = RubyLlm::LLMService.new(profile_name: 'deepseek', profile_path: 'path/to/llm.yml')
+# deepseek = RubyLLM::LLMService.new(profile_name: 'deepseek', profile_path: 'path/to/llm.yml')
 ```
 
 ### 5. 流式响应 (Streaming Yield Block)
@@ -107,7 +108,7 @@ deepseek = RubyLlm::LLMService.new(
 所有的 API 格式都原生支持通过 Block yield 的方式实现 HTTP 分块流式读取。方法向后传递 `(delta, full_buffer)`。
 
 ```ruby
-anthropic = RubyLlm::LLMService.new(
+anthropic = RubyLLM::LLMService.new(
   format: 'anthropic',
   model: 'claude-3-5-sonnet-20240620',
   api_key: ENV['ANTHROPIC_API_KEY']
@@ -170,7 +171,7 @@ end
 ### 8. 提取语义向量 (Embeddings)
 
 ```ruby
-gemini = RubyLlm::LLMService.new(
+gemini = RubyLLM::LLMService.new(
   format: 'gemini', 
   model: 'text-embedding-004',
   api_key: ENV['GEMINI_API_KEY']

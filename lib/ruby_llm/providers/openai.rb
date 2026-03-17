@@ -2,7 +2,7 @@
 
 require_relative "base"
 
-module RubyLlm
+module RubyLLM
   module Providers
     class OpenAi < Base
       def call(messages:, temperature:, max_tokens:, tools: nil, &block)
@@ -50,7 +50,7 @@ module RubyLlm
         usage = data[:usage]
         finish_reason = data.dig(:choices, 0, :finish_reason)
 
-        RubyLlm::Response.new(
+        RubyLLM::Response.new(
           content: content,
           model: @model,
           format_name: @format_name,
@@ -87,7 +87,7 @@ module RubyLlm
           end
         end
 
-        RubyLlm::Response.new(
+        RubyLLM::Response.new(
           content: content_buffer,
           model: @model,
           format_name: @format_name,
@@ -97,7 +97,7 @@ module RubyLlm
       end
 
       def empty_response
-        RubyLlm::Response.new(content: '', model: @model, format_name: @format_name)
+        RubyLLM::Response.new(content: '', model: @model, format_name: @format_name)
       end
     end
   end

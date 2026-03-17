@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-module RubyLlm
+module RubyLLM
   ##
   # Profile Loader for LLM Configurations
   # Allows loading LLM settings from a YAML file.

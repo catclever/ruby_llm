@@ -4,7 +4,7 @@ require_relative "lib/ruby_llm/version"
 
 Gem::Specification.new do |spec|
   spec.name = "ruby_llm"
-  spec.version = RubyLlm::VERSION
+  spec.version = RubyLLM::VERSION
   spec.authors = ["Your Name"]
   spec.email = ["your_email@example.com"]
 
@@ -33,4 +33,6 @@ Gem::Specification.new do |spec|
   # Uncomment to register a new dependency of your gem
   # spec.add_dependency "example-gem", "~> 1.0"
   spec.add_dependency "dotenv", "~> 3.1"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rspec", "~> 3.0"
 end

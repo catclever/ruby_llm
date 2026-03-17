@@ -8,7 +8,7 @@ require_relative 'providers/openai'
 require_relative 'providers/anthropic'
 require_relative 'providers/gemini'
 
-module RubyLlm
+module RubyLLM
   ##
   # LLM Service Facade
   # Supported formats: 'openai', 'anthropic', 'gemini'
@@ -35,7 +35,7 @@ module RubyLlm
       profile_path: nil
     )
       if profile_name
-        prof = RubyLlm::Profile.load(profile_name, file_path: profile_path)
+        prof = RubyLLM::Profile.load(profile_name, file_path: profile_path)
         
         format ||= prof.format_name
         model ||= prof.model
@@ -77,7 +77,7 @@ module RubyLlm
         format_name: @format_name
       )
 
-      @logger.info("RubyLlm initialized: format=#{@format_name} model=#{@model}")
+      @logger.info("RubyLLM initialized: format=#{@format_name} model=#{@model}")
     end
 
     ##

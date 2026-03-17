@@ -10,7 +10,7 @@ puts "============================="
 puts "1. Explicit Initialization"
 puts "============================="
 begin
-  openai = RubyLlm::LLMService.new(
+  openai = RubyLLM::LLMService.new(
     format: 'openai',
     model: 'gpt-4o',
     api_key: ENV['OPENAI_API_KEY'] || 'fake-key'
@@ -27,7 +27,7 @@ puts "============================="
 puts "2. YAML Profile Initialization"
 puts "============================="
 begin
-  anthropic = RubyLlm::LLMService.new(
+  anthropic = RubyLLM::LLMService.new(
     profile_name: 'anthropic',
     profile_path: File.expand_path('../../spec/fixtures/llm.yml', __FILE__)
   )

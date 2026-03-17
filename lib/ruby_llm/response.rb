@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module RubyLlm
+module RubyLLM
   class Response
     attr_reader :content, :model, :format_name, :usage, :finish_reason, :raw_response, :tool_calls, :reasoning_content
 

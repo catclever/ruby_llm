@@ -5,7 +5,7 @@ require 'uri'
 require 'json'
 require 'logger'
 
-module RubyLlm
+module RubyLLM
   module Providers
     class Base
       attr_reader :model, :api_key, :base_url, :timeout, :logger, :format_name, :ssl_verify_none

@@ -2,9 +2,9 @@
 
 [![Ruby](https://img.shields.io/badge/Language-Ruby-red.svg)](https://www.ruby-lang.org/)
 
-**A clean, lightweight, and unified interface for LLM providers (OpenAI, Anthropic, Gemini).**
+**A clean, lightweight LLM interface adapter supporting mainstream API formats (OpenAI, Anthropic, Gemini).**
 
-`RubyLlm` abstract the differences between major AI providers into a single straightforward API, supporting normal completion, streaming, and tool/function calling logic out of the box.
+`RubyLLM` abstracts the underlying differences between major AI providers into a unified and concise Ruby syntax. It supports normal text generation, streaming, and tool/function calling logic out of the box.
 
 ---
 
@@ -41,10 +41,11 @@ Initialize the service by specifying the API `format` and explicitly providing y
 ```ruby
 require 'ruby_llm'
 
-openai = RubyLlm::LLMService.new(
-  format: 'openai',
+openai = RubyLLM::LLMService.new(
+  format: 'openai',       # Required. Specifies the underlying API structure ('openai', 'anthropic', 'gemini')
   model: 'gpt-4o',
-  api_key: ENV['OPENAI_API_KEY']
+  api_key: ENV['OPENAI_API_KEY'],
+  base_url: 'https://api.openai.com/v1' # Optional. Used to specify proxy addresses or other endpoints compatible with the format
 )
 
 # Standard Call
@@ -62,7 +63,7 @@ puts response.finish_reason  # => "stop"
 You can easily interact with API providers that mimic standard formats by supplying a custom `base_url`:
 
 ```ruby
-deepseek = RubyLlm::LLMService.new(
+deepseek = RubyLLM::LLMService.new(
   format: 'openai',               # It uses standard OpenAI API structure
   model: 'deepseek-chat', 
   api_key: ENV['DEEPSEEK_API_KEY'],
@@ -97,13 +98,13 @@ Then load the specific profile during service initialization:
 ```ruby
 # The `format` explicitly resolves to the profile key (e.g. `openai`) 
 # when no `name` or `profile_name` is provided inside the hash.
-deepseek = RubyLlm::LLMService.new(
+deepseek = RubyLLM::LLMService.new(
   profile: 'path/to/llm.yml',
   format: 'deepseek'
 )
 
 # Equivalent explicit dictionary form:
-# deepseek = RubyLlm::LLMService.new(profile: { path: 'path/to/llm.yml', name: 'deepseek' })
+# deepseek = RubyLLM::LLMService.new(profile: { path: 'path/to/llm.yml', name: 'deepseek' })
 ```
 
 ### 5. Streaming Responses (Yield Block)
@@ -111,7 +112,7 @@ deepseek = RubyLlm::LLMService.new(
 All formats support streaming HTTP chunks using a block yield. The method yields `(delta, full_buffer)`.
 
 ```ruby
-anthropic = RubyLlm::LLMService.new(
+anthropic = RubyLLM::LLMService.new(
   format: 'anthropic',
   model: 'claude-3-5-sonnet-20240620',
   api_key: ENV['ANTHROPIC_API_KEY']
@@ -174,7 +175,7 @@ end
 ### 8. Embeddings extraction
 
 ```ruby
-gemini = RubyLlm::LLMService.new(
+gemini = RubyLLM::LLMService.new(
   format: 'gemini', 
   model: 'text-embedding-004',
   api_key: ENV['GEMINI_API_KEY']

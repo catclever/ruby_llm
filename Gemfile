@@ -2,4 +2,6 @@
 
 source "https://rubygems.org"
 
-# gem "rails"
+gemspec
+
+gem "rake", "~> 13.3", group: :development
