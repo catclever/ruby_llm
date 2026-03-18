@@ -65,7 +65,7 @@ module RubyLLM
           http.request(request) do |response|
             if response.code.to_i >= 400
               @logger.error("HTTP error #{response.code}: #{response.body}")
-              return {}
+              raise RubyLLM::APIError.new("API request failed with status #{response.code}", status: response.code.to_i, body: response.body)
             end
             response.read_body do |chunk|
               yield chunk
@@ -76,13 +76,15 @@ module RubyLLM
           response = http.request(request)
           if response.code.to_i >= 400
             @logger.error("HTTP error #{response.code}: #{response.body}")
-            return {}
+            raise RubyLLM::APIError.new("API request failed with status #{response.code}", status: response.code.to_i, body: response.body)
           end
           JSON.parse(response.body, symbolize_names: true)
         end
+      rescue RubyLLM::APIError => e
+        raise e
       rescue StandardError => e
         @logger.error("HTTP request failed: #{e.message}")
-        {}
+        raise RubyLLM::APIError.new("HTTP request failed: #{e.message}")
       end
     end
   end
