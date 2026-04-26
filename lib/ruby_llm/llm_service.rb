@@ -41,6 +41,7 @@ module RubyLLM
         model ||= prof.model
         api_key ||= prof.api_key
         base_url ||= prof.base_url
+        timeout ||= prof.timeout
         ssl_verify_none = prof.ssl_verify_none if ssl_verify_none.nil?
       end
 

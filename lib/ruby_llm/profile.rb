@@ -7,7 +7,7 @@ module RubyLLM
   # Profile Loader for LLM Configurations
   # Allows loading LLM settings from a YAML file.
   class Profile
-    attr_reader :name, :format_name, :model, :base_url, :api_key, :ssl_verify_none
+    attr_reader :name, :format_name, :model, :base_url, :api_key, :ssl_verify_none, :timeout
 
     DEFAULT_PATHS = [
       'llm.yml',
@@ -42,6 +42,7 @@ module RubyLLM
       @format_name = stringified_data['format']
       @model = stringified_data['model']
       @base_url = stringified_data['base_url']
+      @timeout = stringified_data['timeout']
       
       # API Key: Either from the YAML directly, or parse a ENV[] string, or fallback to ENV variable
       raw_key = stringified_data['api_key']
@@ -55,6 +56,7 @@ module RubyLLM
         format: @format_name,
         model: @model,
         base_url: @base_url,
+        timeout: @timeout,
         api_key: @api_key,
         ssl_verify_none: @ssl_verify_none
       }.compact
