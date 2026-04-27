@@ -42,6 +42,7 @@ module RubyLLM
         api_key ||= prof.api_key
         base_url ||= prof.base_url
         timeout ||= prof.timeout
+        max_tokens = prof.max_tokens if max_tokens == 2000 && prof.max_tokens
         ssl_verify_none = prof.ssl_verify_none if ssl_verify_none.nil?
       end
 
